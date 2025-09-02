@@ -1,0 +1,33 @@
+name: "Check-run: start"
+description: Start a new check run
+author: Matijs Brinkhuis
+inputs:
+  name:
+    description: >-
+      The name of the check run
+    required: true
+  token:
+    description: >-
+      GITHUB_TOKEN
+    default: ${{ github.token }}
+outputs:
+  check-run-id:
+    description: The id of the check
+    value: ${{ steps.create-check-run.outputs.check-run-id }}
+runs:
+  using: composite
+  steps:
+    - name: Fail if not a workflow_run
+      if: ${{ github.event_name != 'workflow_run' }}
+      shell: bash
+      run: |
+        echo "::error::This action can only be triggered by a workflow_run event."
+        exit 1
+    - name: Create check run
+      id: create-check-run
+      shell: bash
+      env:
+        __HEAD_SHA__: ${{ github.event.workflow_run.head_sha }}
+        __NAME__: ${{ inputs.name }}
+        GH_TOKEN: ${{ inputs.token }}
+      run: ${{ github.action_path }}/action.sh

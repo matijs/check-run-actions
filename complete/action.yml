@@ -1,0 +1,33 @@
+name: "Check run: complete"
+description: Complete a check run
+author: Matijs Brinkhuis
+inputs:
+  check-run-id:
+    description: >-
+      The id of the check run to finish.
+    required: true
+  conclusion:
+    description: >-
+      The conclusion of the check run. Typically one of "success",
+      "failure", or "skipped".
+    required: true
+  token:
+    description: >-
+      GITHUB_TOKEN
+    default: ${{ github.token }}
+runs:
+  using: composite
+  steps:
+    - name: Fail if not a workflow_run
+      if: ${{ github.event_name != 'workflow_run' }}
+      shell: bash
+      run: |
+        echo "::error::This action can only be triggered by a workflow_run event."
+        exit 1
+    - name: Finish
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        __CHECK_RUN_ID__: ${{ inputs.check-run-id }}
+        __CONCLUSION__: ${{ inputs.conclusion }}
+      run: ${{ github.action_path }}/action.sh
