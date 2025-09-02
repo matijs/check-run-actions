@@ -1,0 +1,16 @@
+name: check-run-actions
+description: >-
+  Start and complete check runs. Use `check-run-actions/start` to start a new
+  check run. Use `check-run-actions/complete` to complete a check run.
+author: Matijs Brinkhuis
+runs:
+  using: composite
+  steps:
+    - name: Stub
+      shell: bash
+      run: |
+        echo "This is just a stub."
+        exit 1;
+branding:
+  icon: check-circle
+  color: blue
